@@ -1,0 +1,16 @@
+{
+"todolist": [
+{
+"id": 0,
+"title": "Default",
+"note": "Default Note",
+"due": "2021-04-29T14:29:58.7170876+01:00"
+},
+{
+"id": 1,
+"title": "Add New Todo",
+"note": "Add a third todo!",
+"due": "2021-04-29T14:29:58.7170876+01:00"
+}
+]
+}

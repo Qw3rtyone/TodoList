@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
+	//"github.com/gorilla/mux"
 )
 
 type TodoList struct {
@@ -48,25 +50,23 @@ func initStore() {
 
 	file, _ := json.MarshalIndent(data, "", "")
 	fmt.Println("writing")
-	ioutil.WriteFile("test.json", file, 0644)
+	ioutil.WriteFile("storage/todoList.json", file, 0644)
 	fmt.Println("Finished writing")
 }
 func showList(list TodoList) {
 	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
 	for i := 0; i < len(list.TodoList); i++ {
+		fmt.Println("---------------------------------------")
 		fmt.Println("ID: " + strconv.Itoa(list.TodoList[i].Id))
 		fmt.Println("Title: " + list.TodoList[i].Title)
 		fmt.Println("Note: " + list.TodoList[i].Note)
 		fmt.Println("Due: " + list.TodoList[i].Due.String())
+		fmt.Println("---------------------------------------")
+
 	}
 }
-
-func main() {
-	if _, err := os.Stat("test.json"); os.IsNotExist(err) {
-		initStore()
-	}
-
-	data, err := os.Open("test.json")
+func readList() TodoList {
+	data, err := os.Open("storage/todoList.json")
 	checkerr(err)
 	fmt.Println("Opened List!")
 
@@ -79,4 +79,58 @@ func main() {
 	json.Unmarshal(byteVal, &tdList)
 
 	showList(tdList)
+
+	return tdList
+}
+
+func printList(list TodoList, w http.ResponseWriter) {
+	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
+	for i := 0; i < len(list.TodoList); i++ {
+		fmt.Fprintln(w, "---------------------------------------")
+		fmt.Fprintln(w, "ID: "+strconv.Itoa(list.TodoList[i].Id))
+		fmt.Fprintln(w, "Title: "+list.TodoList[i].Title)
+		fmt.Fprintln(w, "Note: "+list.TodoList[i].Note)
+		fmt.Fprintln(w, "Due: "+list.TodoList[i].Due.String())
+		fmt.Fprintln(w, "---------------------------------------")
+
+	}
+}
+func homePage(w http.ResponseWriter, r *http.Request) {
+	for i := 0; i < 50; i++ {
+		fmt.Fprintln(w, "Welcome, please work <3")
+	}
+	fmt.Println("End of page")
+}
+func fullList(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: full list")
+	printList(readList(), w)
+}
+
+func addToList(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: Add new item")
+
+}
+
+func handleRequests() {
+	/*myRouter := mux.newRouter().StrictSlash(true)
+
+	myRouter.HandleFunc("/", homePage)
+	myRouter.HandleFunc("/showAll", fullList)
+	log.Fatal(http.ListenAndServe(":10000", myRouter))
+	*/
+
+	http.HandleFunc("/", homePage)
+	http.HandleFunc("/showAll", fullList)
+	log.Fatal(http.ListenAndServe(":10000", nil))
+}
+
+func main() {
+	if _, err := os.Stat("storage/todoList.json"); os.IsNotExist(err) {
+		initStore()
+	}
+
+	readList()
+
+	handleRequests()
+
 }

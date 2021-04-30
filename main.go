@@ -9,7 +9,8 @@ import (
 	"os"
 	"strconv"
 	"time"
-	//"github.com/gorilla/mux"
+
+	"github.com/gorilla/mux"
 )
 
 type TodoList struct {
@@ -82,16 +83,18 @@ func readList() TodoList {
 
 	return tdList
 }
-
+func printItem(item Todo, w http.ResponseWriter) {
+	fmt.Fprintln(w, "---------------------------------------")
+	fmt.Fprintln(w, "ID: "+strconv.Itoa(item.Id))
+	fmt.Fprintln(w, "Title: "+item.Title)
+	fmt.Fprintln(w, "Note: "+item.Note)
+	fmt.Fprintln(w, "Due: "+item.Due.String())
+	fmt.Fprintln(w, "---------------------------------------")
+}
 func printList(list TodoList, w http.ResponseWriter) {
 	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
 	for i := 0; i < len(list.TodoList); i++ {
-		fmt.Fprintln(w, "---------------------------------------")
-		fmt.Fprintln(w, "ID: "+strconv.Itoa(list.TodoList[i].Id))
-		fmt.Fprintln(w, "Title: "+list.TodoList[i].Title)
-		fmt.Fprintln(w, "Note: "+list.TodoList[i].Note)
-		fmt.Fprintln(w, "Due: "+list.TodoList[i].Due.String())
-		fmt.Fprintln(w, "---------------------------------------")
+		printItem(list.TodoList[i], w)
 
 	}
 }
@@ -101,27 +104,39 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("End of page")
 }
-func fullList(w http.ResponseWriter, r *http.Request) {
+func getFullList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: full list")
 	printList(readList(), w)
 }
+func getOneItem(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: single item")
+	vars := mux.Vars(r)
+	key := vars["id"]
 
-func addToList(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "Key sent: "+key)
+
+	for _, item := range readList().TodoList {
+		k, err := strconv.Atoi(key)
+		fmt.Println(k)
+		if (err == nil) && (k == item.Id) {
+			printItem(item, w)
+		}
+	}
+}
+
+/*func addToList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: Add new item")
 
 }
-
+*/
 func handleRequests() {
-	/*myRouter := mux.newRouter().StrictSlash(true)
+	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.HandleFunc("/", homePage)
-	myRouter.HandleFunc("/showAll", fullList)
-	log.Fatal(http.ListenAndServe(":10000", myRouter))
-	*/
+	myRouter.HandleFunc("/showAll", getFullList)
+	myRouter.HandleFunc("/show/{id}", getOneItem)
 
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/showAll", fullList)
-	log.Fatal(http.ListenAndServe(":10000", nil))
+	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 
 func main() {

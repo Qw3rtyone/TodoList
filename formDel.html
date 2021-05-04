@@ -3,9 +3,18 @@
     <title>Deleting</title>
     </head>    
     <body>
+        <h1>Enter the ID of the item to delete from the list</h1>
         <form action="/del" method="post">
-            Delete index:<input type="number" name="id">
+            Delete ID:<input type="number" name="id">
             <button type="submit">Delete</button>
         </form>
+
+        {{range .TodoList}}
+        <p>----------------------------------------</p>
+        <p>ID: {{.Id}}</p>
+        <p>Title: {{.Title}}</p>
+        <p>Note {{.Note}}</p>
+        <p>State {{.State}}</p>
+        {{end}}
     </body>
 </html>

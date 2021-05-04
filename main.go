@@ -159,7 +159,6 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: Add new item")
 
 	list := readList()
-	//tmpl := template.Must(template.ParseFiles("form.html"))
 
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("form.html")
@@ -186,20 +185,6 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 			State: false,
 		}
 
-		//item.Id = generateNewID(list)
-		/*
-			data, err := os.Open("storage/todoList.json")
-			checkerr(err)
-			fmt.Println("Opened List!")
-
-			defer data.Close()
-
-			byteVal, _ := ioutil.ReadAll(data)
-			var tdList TodoList
-
-			json.Unmarshal(byteVal, &tdList)
-		*/
-
 		list.TodoList = append(list.TodoList, item)
 		file, _ := json.MarshalIndent(list, "", "")
 
@@ -220,7 +205,7 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("formDel.html")
-		t.Execute(w, nil)
+		t.Execute(w, list)
 
 		return
 	} else {

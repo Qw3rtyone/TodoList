@@ -46,6 +46,24 @@ func initStore() {
 				Note:  "Add a third todo!",
 				State: false,
 			},
+			{
+				Id:    2,
+				Title: "Add Test Todo",
+				Note:  "Add a Fourth todo!",
+				State: false,
+			},
+			{
+				Id:    3,
+				Title: "Add Next",
+				Note:  "Add a a a a todo!",
+				State: false,
+			},
+			{
+				Id:    4,
+				Title: "Dont dont care",
+				Note:  "!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+				State: false,
+			},
 		},
 	}
 
@@ -124,9 +142,23 @@ func getOneItem(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func generateNewID(list TodoList) int {
+
+	max := 0
+
+	//generation of id(last id at the json file+1)
+	for _, item := range list.TodoList {
+		if item.Id > max {
+			max = item.Id
+		}
+	}
+	return (max + 1)
+}
+
 func addToList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: Add new item")
 
+	list := readList()
 	//tmpl := template.Must(template.ParseFiles("form.html"))
 
 	if r.Method == "GET" {
@@ -135,8 +167,8 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		r.ParseForm()
-		idstr := r.Form["id"]
-		id, _ := strconv.Atoi(idstr[0])
+
+		id := generateNewID(list)
 		title := r.Form["title"]
 		body := r.Form["body"]
 		fmt.Fprintln(w, "id: ", id)
@@ -153,6 +185,8 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 			Note:  body[0],
 			State: false,
 		}
+
+		//item.Id = generateNewID(list)
 
 		data, err := os.Open("storage/todoList.json")
 		checkerr(err)
@@ -173,21 +207,54 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Finished writing")
 
 	}
-	/*
-		reqBody, _ := ioutil.ReadAll(r.Body)
-		fmt.Fprintln(w, string(reqBody))
-	*/
+
+}
+
+func deleteFromList(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: Delete item")
+
+	list := readList()
+
+	fmt.Println("Length: ", len(list.TodoList))
+
+	if r.Method == "GET" {
+		t, _ := template.ParseFiles("formDel.html")
+		t.Execute(w, nil)
+
+		//printList(list, w)
+		return
+	} else {
+		r.ParseForm()
+		idstr := r.Form["id"]
+		ind, _ := strconv.Atoi(idstr[0])
+		fmt.Println("id: ", ind)
+
+		for index := range list.TodoList {
+			fmt.Println("Looping")
+
+			if index == ind {
+				//fmt.Println("ID found!")
+				fmt.Println("Deleting: ")
+
+				list.TodoList = append(list.TodoList[:index], list.TodoList[index+1:]...)
+			}
+		}
+		printList(list, w)
+		file, _ := json.MarshalIndent(list, "", "")
+		fmt.Println("writing")
+		ioutil.WriteFile("storage/todoList.json", file, 0644)
+		fmt.Println("Finished writing")
+	}
 }
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 
-	//myRouter.Handle("/", http.FileServer(http.Dir("./static"))).Methods("GET")
-
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/showAll", getFullList)
 	myRouter.HandleFunc("/show/{id}", getOneItem)
 	myRouter.HandleFunc("/add", addToList)
+	myRouter.HandleFunc("/del", deleteFromList)
 
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }

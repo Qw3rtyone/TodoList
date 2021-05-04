@@ -187,20 +187,21 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//item.Id = generateNewID(list)
+		/*
+			data, err := os.Open("storage/todoList.json")
+			checkerr(err)
+			fmt.Println("Opened List!")
 
-		data, err := os.Open("storage/todoList.json")
-		checkerr(err)
-		fmt.Println("Opened List!")
+			defer data.Close()
 
-		defer data.Close()
+			byteVal, _ := ioutil.ReadAll(data)
+			var tdList TodoList
 
-		byteVal, _ := ioutil.ReadAll(data)
-		var tdList TodoList
+			json.Unmarshal(byteVal, &tdList)
+		*/
 
-		json.Unmarshal(byteVal, &tdList)
-
-		tdList.TodoList = append(tdList.TodoList, item)
-		file, _ := json.MarshalIndent(tdList, "", "")
+		list.TodoList = append(list.TodoList, item)
+		file, _ := json.MarshalIndent(list, "", "")
 
 		fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)
@@ -221,7 +222,6 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("formDel.html")
 		t.Execute(w, nil)
 
-		//printList(list, w)
 		return
 	} else {
 		r.ParseForm()
@@ -259,10 +259,12 @@ func handleRequests() {
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 
-func main() {
+func init() {
 	if _, err := os.Stat("storage/todoList.json"); os.IsNotExist(err) {
 		initStore()
 	}
+}
+func main() {
 
 	readList()
 

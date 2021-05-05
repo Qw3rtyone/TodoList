@@ -97,8 +97,6 @@ func readList() TodoList {
 
 	json.Unmarshal(byteVal, &tdList)
 
-	//showList(tdList)
-
 	return tdList
 }
 func printItem(item Todo, w http.ResponseWriter) {
@@ -218,7 +216,6 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("Looping")
 
 			if index == ind {
-				//fmt.Println("ID found!")
 				fmt.Println("Deleting: ")
 
 				list.TodoList = append(list.TodoList[:index], list.TodoList[index+1:]...)
@@ -249,16 +246,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	/*
-		for _, todo := range list.TodoList {
-			fmt.Println(id)
-			if id == todo.Id {
-				item = todo
-				found = true
-				break
-			}
-		}
-	*/
+
 	if r.Method == "GET" {
 
 		if found {
@@ -271,7 +259,6 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 
 		return
 	} else {
-		fmt.Fprintln(w, "Wooo something something")
 		r.ParseForm()
 
 		title := r.Form["Title"]
@@ -280,7 +267,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 		s, err := strconv.ParseBool(state[0])
 
 		fmt.Println("Form: ", r.Form)
-		fmt.Println("Bool: ", s)
+
 		list.TodoList[index].Title = title[0]
 		list.TodoList[index].Note = body[0]
 		if err == nil {

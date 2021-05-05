@@ -1,0 +1,29 @@
+<html>
+    <head>
+    <title>Updating!</title>
+    </head>    
+    <body>
+        <h1>Update the fields</h1>
+        <form action="/update/{{.Id}}" method="post">
+            <p>Updating Title:<input type="text" name="Title" value={{.Title}}></p> 
+            <p>Updating Body:<input type="text" name="Body" value={{.Note}}></p>
+            <label for="State">Change State: </label>
+            <select name="State" id="State" required>
+                {{if .State}}
+                <option value="True" selected>True</option>
+                <option value="False">False</option>
+                {{else }}
+                <option value="True">True</option>
+                <option value="False" selected>False</option>
+                {{end}}
+            </select> 
+            <p><button type="submit">Update</button></p>
+        </form>
+            
+        <p>ID: {{.Id}}</p>
+        <p>Title: {{.Title}}</p>
+        <p>Note {{.Note}}</p>
+        <p>State {{.State}}</p>
+        
+    </body>
+</html>

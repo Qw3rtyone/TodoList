@@ -10,11 +10,11 @@
 "id": 1,
 "title": "Add New Todo",
 "note": "Add a third todo!",
-"state": false
+"state": true
 },
 {
 "id": 2,
-"title": "Add Test Todo",
+"title": "Add Test Todo changed",
 "note": "Add a Fourth todo!",
 "state": false
 },
@@ -28,7 +28,7 @@
 "id": 5,
 "title": "This is a test",
 "note": "This is not a drill",
-"state": false
+"state": true
 },
 {
 "id": 6,

@@ -97,7 +97,7 @@ func readList() TodoList {
 
 	json.Unmarshal(byteVal, &tdList)
 
-	showList(tdList)
+	//showList(tdList)
 
 	return tdList
 }
@@ -231,6 +231,70 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Finished writing")
 	}
 }
+func updateItem(w http.ResponseWriter, r *http.Request) {
+	list := readList()
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		fmt.Println("ID is: ", id)
+	}
+	var index int
+	var found bool = false
+	for i := 0; i < len(list.TodoList); i++ {
+		fmt.Println(id)
+		if id == list.TodoList[i].Id {
+			index = i
+			found = true
+			break
+		}
+	}
+	/*
+		for _, todo := range list.TodoList {
+			fmt.Println(id)
+			if id == todo.Id {
+				item = todo
+				found = true
+				break
+			}
+		}
+	*/
+	if r.Method == "GET" {
+
+		if found {
+			t, _ := template.ParseFiles("formUpdate.html")
+			t.Execute(w, list.TodoList[index])
+		} else {
+			t, _ := template.ParseFiles("formUpdateNotFound.html")
+			t.Execute(w, nil)
+		}
+
+		return
+	} else {
+		fmt.Fprintln(w, "Wooo something something")
+		r.ParseForm()
+
+		title := r.Form["Title"]
+		body := r.Form["Body"]
+		state := r.Form["State"]
+		s, err := strconv.ParseBool(state[0])
+
+		fmt.Println("Form: ", r.Form)
+		fmt.Println("Bool: ", s)
+		list.TodoList[index].Title = title[0]
+		list.TodoList[index].Note = body[0]
+		if err == nil {
+			list.TodoList[index].State = s
+		}
+
+		printItem(list.TodoList[index], w)
+
+		file, _ := json.MarshalIndent(list, "", "")
+		fmt.Println("writing")
+		ioutil.WriteFile("storage/todoList.json", file, 0644)
+		fmt.Println("Finished writing")
+	}
+}
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
@@ -240,6 +304,7 @@ func handleRequests() {
 	myRouter.HandleFunc("/show/{id}", getOneItem)
 	myRouter.HandleFunc("/add", addToList)
 	myRouter.HandleFunc("/del", deleteFromList)
+	myRouter.HandleFunc("/update/{id}", updateItem)
 
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }

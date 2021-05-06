@@ -123,7 +123,10 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 func getFullList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: full list")
-	printList(readList(), w)
+	//printList(readList(), w)
+
+	t, _ := template.ParseFiles("templates/showAllItems.html")
+	t.Execute(w, readList())
 }
 func getOneItem(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: single item")
@@ -211,7 +214,7 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		idstr := r.Form["id"]
 		ind, _ := strconv.Atoi(idstr[0])
-		fmt.Println("id: ", ind)
+		fmt.Println("index: ", ind)
 
 		for index := range list.TodoList {
 			fmt.Println("Looping")
@@ -294,6 +297,8 @@ func handleRequests() {
 	myRouter.HandleFunc("/del", deleteFromList)
 	myRouter.HandleFunc("/update/{id}", updateItem)
 
+	//myRouter.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("templates/css/"))))
+	myRouter.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("templates/css/"))))
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 

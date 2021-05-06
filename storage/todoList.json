@@ -1,18 +1,6 @@
 {
 "todolist": [
 {
-"id": 0,
-"title": "Default",
-"note": "Default Note",
-"state": false
-},
-{
-"id": 1,
-"title": "Add New Todo",
-"note": "Add a third todo!",
-"state": true
-},
-{
 "id": 2,
 "title": "Add Test Todo changed",
 "note": "Add a Fourth todo!",
@@ -34,6 +22,12 @@
 "id": 6,
 "title": "This is a repla",
 "note": "Aksjdkasjd ",
+"state": false
+},
+{
+"id": 7,
+"title": "This is noot number",
+"note": "this is asd asd asd ",
 "state": false
 }
 ]

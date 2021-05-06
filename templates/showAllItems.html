@@ -1,0 +1,29 @@
+<html>
+    <head>
+    <link rel="stylesheet" href="css/styles.css"/>
+    <title>Full List</title>
+    </head>    
+    <body>
+
+        <div class="gridContainer">
+            {{range .TodoList}}
+                {{if .State}}    
+                <div class="gridItemTrue">
+                {{else}}
+                <div class="gridItemFalse">
+                {{end}}
+                <form action="/update/{{.Id}}" method="GET">
+                    <button name="submit" type="submit" class="customButton"> 
+                        <p>ID: {{.Id}}</p>
+                        <p>Title: {{.Title}}</p>
+                        <p>Note: {{.Note}}</p>
+                        <p>Completed: {{.State}}</p>
+                    </button>
+                </form>
+                </div>
+            {{end}}
+
+        </div>
+        
+    </body>
+</html>

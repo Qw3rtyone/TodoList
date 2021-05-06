@@ -115,9 +115,10 @@ func printList(list TodoList, w http.ResponseWriter) {
 	}
 }
 func homePage(w http.ResponseWriter, r *http.Request) {
-	for i := 0; i < 50; i++ {
-		fmt.Fprintln(w, "Welcome, please work <3")
-	}
+
+	t, _ := template.ParseFiles("templates/homepage.html")
+	t.Execute(w, nil)
+
 	fmt.Println("End of page")
 }
 func getFullList(w http.ResponseWriter, r *http.Request) {
@@ -159,7 +160,7 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 	list := readList()
 
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("form.html")
+		t, _ := template.ParseFiles("templates/form.html")
 		t.Execute(w, nil)
 		return
 	} else {
@@ -202,7 +203,7 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Length: ", len(list.TodoList))
 
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("formDel.html")
+		t, _ := template.ParseFiles("templates/formDel.html")
 		t.Execute(w, list)
 
 		return
@@ -250,10 +251,10 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 
 		if found {
-			t, _ := template.ParseFiles("formUpdate.html")
+			t, _ := template.ParseFiles("templates/formUpdate.html")
 			t.Execute(w, list.TodoList[index])
 		} else {
-			t, _ := template.ParseFiles("formUpdateNotFound.html")
+			t, _ := template.ParseFiles("templates/formUpdateNotFound.html")
 			t.Execute(w, nil)
 		}
 

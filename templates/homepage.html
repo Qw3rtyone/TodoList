@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        table, th, td {
+          border: 2px solid rgb(82, 0, 0);
+          border-collapse: collapse;
+          padding: 8px;
+        }
+        
+        table.center {
+          margin-left: auto; 
+          margin-right: auto;
+        }
+        </style>
+        </head>
+    <head>
+    <title>Homepage!</title>
+    </head>    
+    <body>
+        <h1 style="text-align:center">Welcome to a Todo List!</h1>
+        <table style="text-align:center" class="center">
+            <tbody>
+            <tr>
+            <td><strong>Commands:</strong></td>
+            <td><strong>Description:</strong></td>
+            <td><strong>Usage:</strong></td>
+            </tr>
+            <tr>
+            <td><a href="/showAll">showAll</a></td>
+            <td>Reveals all items in the list</td>
+            <td>/showAll</td>
+            </tr>
+            <tr>
+            <td><a href="/show/0">show/{id}</a></td>
+            <td>Returns the item with the supplied id. </td>
+            <td>/show/1</td>
+            </tr>
+            <tr>
+            <td><a href="/add">add</a></td>
+            <td>Allows you to add a new item to the list</td>
+            <td>/add</td>
+            </tr>
+            <tr>
+            <td><a href="/del">del</a></del></td>
+            <td>Allows you to delete an entry</td>
+            <td>/del</td>
+            </tr>
+            <tr>
+            <td><a href="/update/0">update/{id}</a></del></td>
+            <td>Allows you to update an entry</td>
+            <td>/update/1</td>
+            </tr>
+            </tbody>
+            </table>
+    </body>
+</html>

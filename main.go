@@ -64,6 +64,55 @@ func initStore() {
 				Note:  "!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
 				State: false,
 			},
+			{
+				Id:    5,
+				Title: "Number 5",
+				Note:  "Now number 5",
+				State: true,
+			},
+			{
+				Id:    6,
+				Title: "Number 6",
+				Note:  "Not a things",
+				State: true,
+			},
+			{
+				Id:    7,
+				Title: "Oh god how many more",
+				Note:  "Get comfortableGet comfortableGet comfortableGet comfortableGet comfortableGet comfortable",
+				State: false,
+			},
+			{
+				Id:    8,
+				Title: "T",
+				Note:  "T",
+				State: false,
+			},
+			{
+				Id:    9,
+				Title: "On this earth",
+				Note:  "There lay a child in a grave",
+				State: false,
+			},
+			{
+
+				Id:    10,
+				Title: "Friday: Milk",
+				Note:  "Buy milk for friday",
+				State: false,
+			},
+			{
+				Id:    11,
+				Title: "Dog",
+				Note:  "Buy a dog",
+				State: true,
+			},
+			{
+				Id:    12,
+				Title: "Cat",
+				Note:  "Sell the cat",
+				State: false,
+			},
 		},
 	}
 
@@ -210,26 +259,35 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, list)
 
 		return
-	} else {
+	}
+	if r.Method == "POST" {
 		r.ParseForm()
-		idstr := r.Form["id"]
-		ind, _ := strconv.Atoi(idstr[0])
-		fmt.Println("index: ", ind)
 
-		for index := range list.TodoList {
+		idstr := r.Form["idbutton"]
+		ind, _ := strconv.Atoi(idstr[0])
+
+		fmt.Println("id: ", ind)
+
+		for index, item := range list.TodoList {
 			fmt.Println("Looping")
 
-			if index == ind {
+			if item.Id == ind {
 				fmt.Println("Deleting: ")
 
 				list.TodoList = append(list.TodoList[:index], list.TodoList[index+1:]...)
 			}
 		}
-		printList(list, w)
+
+		t, _ := template.ParseFiles("templates/formDel.html")
+		t.Execute(w, list)
+		//printList(list, w)
+
 		file, _ := json.MarshalIndent(list, "", "")
 		fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)
 		fmt.Println("Finished writing")
+
+		return
 	}
 }
 func updateItem(w http.ResponseWriter, r *http.Request) {

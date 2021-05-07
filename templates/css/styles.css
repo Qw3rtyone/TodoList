@@ -1,21 +1,21 @@
 .gridContainer {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(33.33%, 1fr));
-    background-color: #caf7e9;
-    padding: 10px;
-    float: left;
+    grid-gap: 5px 5px;
+    grid-template-columns: repeat(3, 1fr);
+    background-color: #d0eaff;
+    padding: 1px;
 }
 .gridItemFalse {
     background-color: rgba(253, 146, 146, 0.8);
     border: 1px solid rgb(255, 196, 0);
-    padding: 20px;
+    padding: 10px;
     font-size: 30px;
     text-align: center;
 }
 .gridItemTrue {
     background-color: rgba(148, 250, 144, 0.8);
     border: 1px solid rgba(0, 204, 255, 0.8);
-    padding: 20px;
+    padding: 10px;
     font-size: 30px;
     text-align: center;
 }
@@ -29,13 +29,14 @@ table.center {
     margin-right: auto;
 }
 .customButton {
-    background-color: #2a5264;
-    border: 1px solid rgba(6, 109, 92, 0.8);
+    background-color: #2f3c42;
+    border: 1px solid rgba(71, 185, 166, 0.8);
     color: white;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 30px;
+    font-size: 16px;
+    font-size: 1.5vw;
     margin: 4px 2px;
     cursor: pointer;
 }

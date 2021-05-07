@@ -1,20 +1,29 @@
 <html>
     <head>
-    <title>Deleting</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <title>Deleting</title>
     </head>    
-    <body>
-        <h1>Enter the ID of the item to delete from the list</h1>
-        <form action="/del" method="post">
-            Delete Index:<input type="number" name="id">
-            <button type="submit">Delete</button>
-        </form>
+    <h1>Click the item to delete from the list</h1>
 
-        {{range .TodoList}}
-        <p>----------------------------------------</p>
-        <p>ID: {{.Id}}</p>
-        <p>Title: {{.Title}}</p>
-        <p>Note {{.Note}}</p>
-        <p>State {{.State}}</p>
-        {{end}}
+    <body>
+        <div class="gridContainer">
+            {{range .TodoList}}
+                {{if .State}}    
+                <div class="gridItemTrue">
+                {{else}}
+                <div class="gridItemFalse">
+                {{end}}
+                <form action="/del" method="POST">
+                    <button name="idbutton" value="{{.Id}}" type="submit" class="customButton"> 
+                        <p>ID: {{.Id}}</p>
+                        <p>Title: {{.Title}}</p>
+                        <p>Note: {{.Note}}</p>
+                        <p>Completed: {{.State}}</p>
+                    </button>
+                </form>
+                </div>
+            {{end}}
+
+        </div>
     </body>
 </html>

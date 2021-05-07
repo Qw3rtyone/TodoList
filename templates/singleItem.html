@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/css/styles.css">
+        <title>Single!</title>
+    </head>
+    <body style="text-align: center">
+        {{if .State}}
+        <div class="gridItemTrue" style="align-self: center">
+        {{else}}
+        <div class="gridItemFalse" style="align-self: center">
+        {{end}}
+            <p>ID: {{.Id}}</p>
+            <p>{{.Title}}</p>
+            <p>{{.Note}}</p>
+            <p>Completed: {{.State}}</p>
+        </div>    
+    </body>
+</html>

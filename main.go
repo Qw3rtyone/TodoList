@@ -324,7 +324,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		title := r.Form["Title"]
-		body := r.Form["Body"]
+		body := r.Form["Note"]
 		state := r.Form["State"]
 		s, err := strconv.ParseBool(state[0])
 
@@ -336,7 +336,9 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 			list.TodoList[index].State = s
 		}
 
-		printItem(list.TodoList[index], w)
+		t, _ := template.ParseFiles("templates/singleItem.html")
+		t.Execute(w, list.TodoList[index])
+		//printItem(list.TodoList[index], w)
 
 		file, _ := json.MarshalIndent(list, "", "")
 		fmt.Println("writing")

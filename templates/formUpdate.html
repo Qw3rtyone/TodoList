@@ -2,11 +2,11 @@
     <head>
     <title>Updating!</title>
     </head>    
-    <body>
+    <body style="text-align: center">
         <h1>Update the fields</h1>
         <form action="/update/{{.Id}}" method="post">
             <p>Updating Title:<input type="text" name="Title" value={{.Title}}></p> 
-            <p>Updating Body:<input type="text" name="Body" value={{.Note}}></p>
+            <p>Updating Body:<textarea name="Note" id="Note" cols="30" rows="10">{{.Note}}</textarea></p>
             <label for="State">Change State: </label>
             <select name="State" id="State" required>
                 {{if .State}}

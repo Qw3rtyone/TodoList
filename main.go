@@ -121,6 +121,8 @@ func initStore() {
 	ioutil.WriteFile("storage/todoList.json", file, 0644)
 	fmt.Println("Finished writing")
 }
+
+/*
 func showList(list TodoList) {
 	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
 	for i := 0; i < len(list.TodoList); i++ {
@@ -133,6 +135,7 @@ func showList(list TodoList) {
 
 	}
 }
+*/
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
 	checkerr(err)
@@ -156,6 +159,8 @@ func printItem(item Todo, w http.ResponseWriter) {
 	fmt.Fprintln(w, "State: "+strconv.FormatBool(item.State))
 	fmt.Fprintln(w, "---------------------------------------")
 }
+
+/*
 func printList(list TodoList, w http.ResponseWriter) {
 	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
 	for i := 0; i < len(list.TodoList); i++ {
@@ -163,6 +168,7 @@ func printList(list TodoList, w http.ResponseWriter) {
 
 	}
 }
+*/
 func homePage(w http.ResponseWriter, r *http.Request) {
 
 	t, _ := template.ParseFiles("templates/homepage.html")
@@ -182,13 +188,13 @@ func getOneItem(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 
-	fmt.Fprintln(w, "Key sent: "+key)
-
 	for _, item := range readList().TodoList {
 		k, err := strconv.Atoi(key)
 		fmt.Println(k)
 		if (err == nil) && (k == item.Id) {
-			printItem(item, w)
+			t, _ := template.ParseFiles("templates/singleItem.html")
+			t.Execute(w, item)
+			return
 		}
 	}
 }

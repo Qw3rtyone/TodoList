@@ -128,7 +128,6 @@ func initStore() {
 	fmt.Println("Finished writing")
 }
 
-//Read the list into an array
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
 	checkerr(err)

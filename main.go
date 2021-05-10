@@ -113,8 +113,15 @@ func initStore() {
 				Note:  "Sell the cat",
 				State: false,
 			},
+			{
+				Id:    13,
+				Title: "Just for a commit",
+				Note:  "Check if this needs a signed commit",
+				State: false,
+			},
 		},
 	}
+	//nonononononononon
 
 	file, _ := json.MarshalIndent(data, "", "")
 	fmt.Println("writing")

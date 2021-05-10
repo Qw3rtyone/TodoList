@@ -122,20 +122,6 @@ func initStore() {
 	fmt.Println("Finished writing")
 }
 
-/*
-func showList(list TodoList) {
-	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
-	for i := 0; i < len(list.TodoList); i++ {
-		fmt.Println("---------------------------------------")
-		fmt.Println("ID: " + strconv.Itoa(list.TodoList[i].Id))
-		fmt.Println("Title: " + list.TodoList[i].Title)
-		fmt.Println("Note: " + list.TodoList[i].Note)
-		fmt.Println("State: " + strconv.FormatBool(list.TodoList[i].State))
-		fmt.Println("---------------------------------------")
-
-	}
-}
-*/
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
 	checkerr(err)
@@ -151,24 +137,7 @@ func readList() TodoList {
 
 	return tdList
 }
-func printItem(item Todo, w http.ResponseWriter) {
-	fmt.Fprintln(w, "---------------------------------------")
-	fmt.Fprintln(w, "ID: "+strconv.Itoa(item.Id))
-	fmt.Fprintln(w, "Title: "+item.Title)
-	fmt.Fprintln(w, "Note: "+item.Note)
-	fmt.Fprintln(w, "State: "+strconv.FormatBool(item.State))
-	fmt.Fprintln(w, "---------------------------------------")
-}
 
-/*
-func printList(list TodoList, w http.ResponseWriter) {
-	fmt.Println("Trying to print list. Length " + strconv.Itoa(len(list.TodoList)))
-	for i := 0; i < len(list.TodoList); i++ {
-		printItem(list.TodoList[i], w)
-
-	}
-}
-*/
 func homePage(w http.ResponseWriter, r *http.Request) {
 
 	t, _ := template.ParseFiles("templates/homepage.html")
@@ -178,7 +147,6 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 func getFullList(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: full list")
-	//printList(readList(), w)
 
 	t, _ := template.ParseFiles("templates/showAllItems.html")
 	t.Execute(w, readList())
@@ -286,7 +254,6 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 
 		t, _ := template.ParseFiles("templates/formDel.html")
 		t.Execute(w, list)
-		//printList(list, w)
 
 		file, _ := json.MarshalIndent(list, "", "")
 		fmt.Println("writing")
@@ -344,7 +311,6 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 
 		t, _ := template.ParseFiles("templates/singleItem.html")
 		t.Execute(w, list.TodoList[index])
-		//printItem(list.TodoList[index], w)
 
 		file, _ := json.MarshalIndent(list, "", "")
 		fmt.Println("writing")
@@ -363,7 +329,6 @@ func handleRequests() {
 	myRouter.HandleFunc("/del", deleteFromList)
 	myRouter.HandleFunc("/update/{id}", updateItem)
 
-	//myRouter.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("templates/css/"))))
 	myRouter.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("templates/css/"))))
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }

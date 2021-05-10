@@ -113,12 +113,6 @@ func initStore() {
 				Note:  "Sell the cat",
 				State: false,
 			},
-			{
-				Id:    13,
-				Title: "Just for a commit",
-				Note:  "Check if this needs a signed commit",
-				State: false,
-			},
 		},
 	}
 
@@ -128,11 +122,10 @@ func initStore() {
 	fmt.Println("Finished writing")
 }
 
-//Read the list into an array
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
 	checkerr(err)
-	fmt.Println("Opened List!")
+	fmt.Println("Opened file!!")
 
 	defer data.Close()
 

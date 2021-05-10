@@ -131,7 +131,7 @@ func initStore() {
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
 	checkerr(err)
-	fmt.Println("Opened List!")
+	fmt.Println("Opened file!!")
 
 	defer data.Close()
 

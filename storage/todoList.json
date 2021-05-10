@@ -10,7 +10,7 @@
 "id": 1,
 "title": "Add New Todo",
 "note": "Add a third todo!",
-"state": false
+"state": true
 },
 {
 "id": 2,

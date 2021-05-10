@@ -3,9 +3,15 @@
         <link rel="stylesheet" href="css/styles.css">
         <title>Deleting</title>
     </head>    
-    <h1>Click the item to delete from the list</h1>
-
     <body>
+        <div class="topnav">
+            <a href="/">Home</a>
+            <a href="showAll">Show All</a>
+            <a class="active" href="del">Delete</a>
+            <a href="add">Add</a>
+        </div>
+        <h1>Click the item to delete from the list</h1>
+
         <div class="gridContainer">
             {{range .TodoList}}
                 {{if .State}}    

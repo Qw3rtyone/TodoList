@@ -4,6 +4,12 @@
     <title>Full List</title>
     </head>    
     <body>
+        <div class="topnav">
+            <a href="/">Home</a>
+            <a class="active" href="showAll">Show All</a>
+            <a href="del">Delete</a>
+            <a href="add">Add</a>
+        </div>
         <div class="gridContainer">
             {{range .TodoList}}
                 {{if .State}}    

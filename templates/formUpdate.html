@@ -3,6 +3,12 @@
     <title>Updating!</title>
     </head>    
     <body style="text-align: center">
+        <div class="topnav">
+            <a href="/">Home</a>
+            <a href="showAll">Show All</a>
+            <a href="del">Delete</a>
+            <a href="add">Add</a>
+        </div>
         <h1>Update the fields</h1>
         <form action="/update/{{.Id}}" method="post">
             <p>Updating Title:<input type="text" name="Title" value={{.Title}}></p> 

@@ -20,7 +20,7 @@
     text-align: center;
 }
 table, th, td {
-    border: 2px solid rgb(82, 0, 0);
+    border: 2px solid rgb(4, 60, 124);
     border-collapse: collapse;
     padding: 8px;
 }
@@ -39,4 +39,25 @@ table.center {
     font-size: 1.5vw;
     margin: 4px 2px;
     cursor: pointer;
+}
+.topnav {
+    background-color: rgb(39, 37, 37);
+    overflow: hidden;
+}
+.topnav a {
+    float: left;
+    color: #f5d5b6;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    border: 1px solid #f5d5b6;
+}
+.topnav a:hover {
+    background-color: rgb(255, 225, 169);
+    color: black;
+}
+.topnav a.active {
+    background-color: #6deaee;
+    color: rgb(0, 16, 51);
 }

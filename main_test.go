@@ -102,3 +102,122 @@ func TestReadList(t *testing.T) {
 	}
 
 }
+
+type testStruct struct {
+	todolist TodoList
+	expected int
+}
+
+var idTests = []testStruct{
+	{
+		todolist: TodoList{
+			TodoList: []Todo{
+				{
+					Id:    0,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+			},
+		},
+		expected: 1,
+	},
+	{
+		todolist: TodoList{
+			TodoList: []Todo{
+				{
+					Id:    10,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+			},
+		},
+		expected: 11,
+	},
+	{
+		todolist: TodoList{
+			TodoList: []Todo{
+				{
+					Id:    0,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    1,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    2,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    3,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    4,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+			},
+		},
+		expected: 5,
+	},
+	{
+		todolist: TodoList{
+			TodoList: []Todo{
+				{
+					Id:    100,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    11231,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    9999,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    98182,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+				{
+					Id:    4,
+					Title: "Default",
+					Note:  "Default Note",
+					State: false,
+				},
+			},
+		},
+		expected: 98183,
+	},
+}
+
+func TestGenerateNewID(t *testing.T) {
+
+	for _, test := range idTests {
+		got := generateNewID(test.todolist)
+		if got != test.expected {
+			t.Errorf("Expected Id is not generated. Expected: %d, recieved: %d", test.expected, got)
+		}
+	}
+
+}

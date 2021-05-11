@@ -98,7 +98,7 @@ func TestReadList(t *testing.T) {
 	json.Unmarshal(byteVal, &want)
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("readList did not return the provided list")
+		t.Errorf("The readList function did not return the list equal to provided")
 	}
 
 }

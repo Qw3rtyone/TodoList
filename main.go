@@ -30,8 +30,7 @@ func checkerr(e error) {
 	}
 }
 
-func initStore() {
-
+func generateDefaultList() TodoList {
 	data := TodoList{
 		TodoList: []Todo{
 			{
@@ -76,50 +75,27 @@ func initStore() {
 				Note:  "Not a things",
 				State: true,
 			},
-			{
-				Id:    7,
-				Title: "Oh god how many more",
-				Note:  "Get comfortableGet comfortableGet comfortableGet comfortableGet comfortableGet comfortable",
-				State: false,
-			},
-			{
-				Id:    8,
-				Title: "T",
-				Note:  "T",
-				State: false,
-			},
-			{
-				Id:    9,
-				Title: "On this earth",
-				Note:  "There lay a child in a grave",
-				State: false,
-			},
-			{
-
-				Id:    10,
-				Title: "Friday: Milk",
-				Note:  "Buy milk for friday",
-				State: false,
-			},
-			{
-				Id:    11,
-				Title: "Dog",
-				Note:  "Buy a dog",
-				State: true,
-			},
-			{
-				Id:    12,
-				Title: "Cat",
-				Note:  "Sell the cat",
-				State: false,
-			},
 		},
 	}
+	return data
+}
+func initStore() error {
+	if _, err := os.Stat("storage/todoList.json"); os.IsNotExist(err) {
 
-	file, _ := json.MarshalIndent(data, "", "")
-	fmt.Println("writing")
-	ioutil.WriteFile("storage/todoList.json", file, 0644)
-	fmt.Println("Finished writing")
+		data := generateDefaultList()
+		file, err := json.MarshalIndent(data, "", "")
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("writing")
+		ioutil.WriteFile("storage/todoList.json", file, 0644)
+		fmt.Println("Finished writing")
+		return nil
+	}
+
+	return nil
 }
 
 func readList() TodoList {
@@ -334,8 +310,10 @@ func handleRequests() {
 }
 
 func init() {
-	if _, err := os.Stat("storage/todoList.json"); os.IsNotExist(err) {
-		initStore()
+
+	err := initStore()
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 func main() {

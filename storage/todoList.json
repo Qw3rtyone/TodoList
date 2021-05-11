@@ -4,13 +4,13 @@
 "id": 0,
 "title": "Default",
 "note": "Default Note",
-"state": true
+"state": false
 },
 {
 "id": 1,
 "title": "Add New Todo",
 "note": "Add a third todo!",
-"state": true
+"state": false
 },
 {
 "id": 2,
@@ -41,48 +41,6 @@
 "title": "Number 6",
 "note": "Not a things",
 "state": true
-},
-{
-"id": 7,
-"title": "Oh god how many more",
-"note": "Get comfortableGet comfortableGet comfortableGet comfortableGet comfortableGet comfortable",
-"state": false
-},
-{
-"id": 8,
-"title": "T",
-"note": "T",
-"state": false
-},
-{
-"id": 9,
-"title": "On this earth",
-"note": "There lay a child in a grave",
-"state": false
-},
-{
-"id": 10,
-"title": "Friday: Milk",
-"note": "Buy milk for friday",
-"state": false
-},
-{
-"id": 11,
-"title": "Dog",
-"note": "Buy a dog",
-"state": true
-},
-{
-"id": 12,
-"title": "Cat",
-"note": "Sell the cat",
-"state": true
-},
-{
-"id": 13,
-"title": "A new todo",
-"note": "Dont do this ",
-"state": false
 }
 ]
 }

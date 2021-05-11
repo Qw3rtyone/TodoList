@@ -41,6 +41,7 @@ table.center {
     cursor: pointer;
 }
 .topnav {
+    position: relative;
     background-color: rgb(39, 37, 37);
     overflow: hidden;
 }

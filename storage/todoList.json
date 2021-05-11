@@ -77,6 +77,12 @@
 "title": "Cat",
 "note": "Sell the cat",
 "state": true
+},
+{
+"id": 13,
+"title": "A new todo",
+"note": "Dont do this ",
+"state": false
 }
 ]
 }

@@ -195,9 +195,6 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 		id := generateNewID(list)
 		title := r.Form["title"]
 		body := r.Form["body"]
-		fmt.Fprintln(w, "id: ", id)
-		fmt.Fprintln(w, "title: ", title[0])
-		fmt.Fprintln(w, "body: ", body[0])
 
 		fmt.Println("id: ", id)
 		fmt.Println("title: ", title[0])
@@ -212,6 +209,9 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 
 		list.TodoList = append(list.TodoList, item)
 		file, _ := json.MarshalIndent(list, "", "")
+
+		t, _ := template.ParseFiles("templates/singleItem.html")
+		t.Execute(w, item)
 
 		fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)

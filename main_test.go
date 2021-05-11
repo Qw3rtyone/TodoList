@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
@@ -75,6 +77,28 @@ func TestInitStore(t *testing.T) {
 	}
 	if _, err := os.Stat("storage/todoList.json"); os.IsNotExist(err) {
 		t.Errorf("file not found")
+	}
+
+}
+
+func TestReadList(t *testing.T) {
+
+	got := readList()
+
+	data, err := os.Open("storage/todoList.json")
+	defer data.Close()
+
+	if err != nil {
+		t.Errorf("Couldn't read comparison list")
+	}
+
+	byteVal, _ := ioutil.ReadAll(data)
+
+	var want TodoList
+	json.Unmarshal(byteVal, &want)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("readList did not return the provided list")
 	}
 
 }

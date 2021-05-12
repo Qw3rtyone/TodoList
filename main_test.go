@@ -301,3 +301,52 @@ func TestGetOneItem(t *testing.T) {
 		}
 	}
 }
+
+func TestGetOneItemNotFound(t *testing.T) {
+
+	testRequests := []string{"9999"}
+
+	list := readList()
+
+	for _, id := range testRequests {
+		req, err := http.NewRequest("GET", "/show/"+id, nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		//create a new router to make sure the variables are passed in properly
+		router := mux.NewRouter()
+		router.HandleFunc("/show/{id}", getOneItem)
+		router.ServeHTTP(rr, req)
+
+		//check status code
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		listId, err := strconv.Atoi(id)
+		if err != nil {
+			t.Errorf("Couldn't convert key to int")
+		}
+		var listInd int
+		for index, item := range list.TodoList {
+			if item.Id == listId {
+				listInd = index
+				break
+			}
+		}
+
+		a, _ := template.ParseFiles("templates/formNotFound.html")
+		var tpl bytes.Buffer
+		a.Execute(&tpl, list.TodoList[listInd])
+
+		got := rr.Body.String()
+		want := tpl.String()
+
+		if got != want {
+			t.Errorf("handler returned unexpected body. got %v want %v", got, want)
+		}
+	}
+}

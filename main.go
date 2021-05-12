@@ -141,6 +141,9 @@ func getOneItem(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	t, _ := template.ParseFiles("templates/formNotFound.html")
+	t.Execute(w, nil)
+	return
 }
 
 func generateNewID(list TodoList) int {
@@ -264,7 +267,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 			t, _ := template.ParseFiles("templates/formUpdate.html")
 			t.Execute(w, list.TodoList[index])
 		} else {
-			t, _ := template.ParseFiles("templates/formUpdateNotFound.html")
+			t, _ := template.ParseFiles("templates/formNotFound.html")
 			t.Execute(w, nil)
 		}
 

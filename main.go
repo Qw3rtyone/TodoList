@@ -126,6 +126,7 @@ func getFullList(w http.ResponseWriter, r *http.Request) {
 
 	t, _ := template.ParseFiles("templates/showAllItems.html")
 	t.Execute(w, readList())
+
 }
 func getOneItem(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: single item")

@@ -9,7 +9,10 @@ import (
 	"net/http/httptest"
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
+
+	"github.com/gorilla/mux"
 )
 
 func TestGenerateDefaultList(t *testing.T) {
@@ -103,7 +106,6 @@ func TestReadList(t *testing.T) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("The readList function did not return the list equal to provided")
 	}
-
 }
 
 type testStruct struct {
@@ -215,7 +217,7 @@ var idTests = []testStruct{
 }
 
 func TestGenerateNewID(t *testing.T) {
-
+	t.Log("Generate ID")
 	for _, test := range idTests {
 		got := generateNewID(test.todolist)
 		if got != test.expected {
@@ -244,8 +246,58 @@ func TestGetFullList(t *testing.T) {
 
 	// Check the response body is what we expect.
 	expected := tpl.String()
-
+	//t.Errorf("Print: want %v  got %v", expected, rr.Body.String())
 	if rr.Body.String() != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
+	}
+
+}
+
+func TestGetOneItem(t *testing.T) {
+
+	testRequests := []string{"0", "1", "6"}
+
+	list := readList()
+
+	for _, id := range testRequests {
+		req, err := http.NewRequest("GET", "/show/"+id, nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		//create a new router to make sure the variables are passed in properly
+		router := mux.NewRouter()
+		router.HandleFunc("/show/{id}", getOneItem)
+		router.ServeHTTP(rr, req)
+
+		//check status code
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		listId, err := strconv.Atoi(id)
+		if err != nil {
+			t.Errorf("Couldn't convert key to int")
+		}
+		var listInd int
+		for index, item := range list.TodoList {
+			if item.Id == listId {
+				listInd = index
+				break
+			}
+		}
+
+		a, _ := template.ParseFiles("templates/singleItem.html")
+		var tpl bytes.Buffer
+		a.Execute(&tpl, list.TodoList[listInd])
+
+		got := rr.Body.String()
+		want := tpl.String()
+
+		if got != want {
+			t.Errorf("handler returned unexpected body. got %v want %v", got, want)
+		}
 	}
 }

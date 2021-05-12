@@ -89,9 +89,9 @@ func initStore() error {
 			return err
 		}
 
-		fmt.Println("writing")
+		//fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)
-		fmt.Println("Finished writing")
+		//fmt.Println("Finished writing")
 		return nil
 	}
 
@@ -101,7 +101,7 @@ func initStore() error {
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
 	checkerr(err)
-	fmt.Println("Opened file!!")
+	//fmt.Println("Opened file!!")
 
 	defer data.Close()
 
@@ -132,10 +132,9 @@ func getOneItem(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: single item")
 	vars := mux.Vars(r)
 	key := vars["id"]
-
+	k, err := strconv.Atoi(key)
 	for _, item := range readList().TodoList {
-		k, err := strconv.Atoi(key)
-		fmt.Println(k)
+		//fmt.Println(k)
 		if (err == nil) && (k == item.Id) {
 			t, _ := template.ParseFiles("templates/singleItem.html")
 			t.Execute(w, item)

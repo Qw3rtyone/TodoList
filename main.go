@@ -315,9 +315,7 @@ func handleRequests() {
 func init() {
 
 	err := initStore()
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkerr(err)
 }
 func main() {
 

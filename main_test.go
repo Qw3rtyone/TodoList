@@ -7,9 +7,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/gorilla/mux"
@@ -304,7 +306,7 @@ func TestGetOneItem(t *testing.T) {
 
 func TestGetOneItemNotFound(t *testing.T) {
 
-	testRequests := []string{"9999"}
+	testRequests := []string{"9999", "-1"}
 
 	list := readList()
 
@@ -349,4 +351,137 @@ func TestGetOneItemNotFound(t *testing.T) {
 			t.Errorf("handler returned unexpected body. got %v want %v", got, want)
 		}
 	}
+}
+
+func TestHomepage(t *testing.T) {
+	req, err := http.NewRequest("GET", "/", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(homePage)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	a, _ := template.ParseFiles("templates/homepage.html")
+	var tpl bytes.Buffer
+	a.Execute(&tpl, readList())
+
+	// Check the response body is what we expect.
+	want := tpl.String()
+	//t.Errorf("Print: want %v  got %v", expected, rr.Body.String())
+	if rr.Body.String() != want {
+		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), want)
+	}
+}
+
+func TestAddToListGet(t *testing.T) {
+	req, err := http.NewRequest("GET", "/add", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(addToList)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	a, _ := template.ParseFiles("templates/form.html")
+	var tpl bytes.Buffer
+	a.Execute(&tpl, readList())
+
+	// Check the response body is what we expect.
+	want := tpl.String()
+	//t.Errorf("Print: want %v  got %v", expected, rr.Body.String())
+	if rr.Body.String() != want {
+		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), want)
+	}
+}
+
+func TestAddToListPost(t *testing.T) {
+	testFormStruct := []struct {
+		testTitle string
+		testBody  string
+		expected  Todo
+	}{
+		{
+			"Test1",
+			"Test1 body",
+			Todo{
+				7,
+				"Test1",
+				"Test1 body",
+				false,
+			},
+		},
+		{
+			"Test2",
+			"Test2 body. This is a test body",
+			Todo{
+				8,
+				"Test2",
+				"Test2 body. This is a test body",
+				false,
+			},
+		},
+		{
+			"Test 3",
+			"Test 3 body. This is a test body for the third test.",
+			Todo{
+				9,
+				"Test 3",
+				"Test 3 body. This is a test body for the third test.",
+				false,
+			},
+		},
+	}
+
+	e := os.Remove("storage/todoList.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	err := initStore()
+	if err != nil {
+		t.Fatal(e)
+	}
+
+	for _, test := range testFormStruct {
+		form := url.Values{}
+		form.Add("title", test.testTitle)
+		form.Add("body", test.testBody)
+
+		req, err := http.NewRequest("POST", "/add", strings.NewReader(form.Encode()))
+		req.Form = form
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		//create a new router to make sure the variables are passed in properly
+		router := mux.NewRouter()
+		router.HandleFunc("/add", addToList)
+		router.ServeHTTP(rr, req)
+
+		//check status code
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		a, _ := template.ParseFiles("templates/singleItem.html")
+		var tpl bytes.Buffer
+		a.Execute(&tpl, test.expected)
+
+		got := rr.Body.String()
+		want := tpl.String()
+
+		if got != want {
+			t.Errorf("handler returned unexpected body. got %v want %v", got, want)
+		}
+	}
+
 }

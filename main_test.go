@@ -106,7 +106,7 @@ func TestReadList(t *testing.T) {
 	json.Unmarshal(byteVal, &want)
 
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("The readList function did not return the list equal to provided")
+		t.Errorf("The readList function did not return the list equal to List file")
 	}
 }
 
@@ -482,6 +482,78 @@ func TestAddToListPost(t *testing.T) {
 		if got != want {
 			t.Errorf("handler returned unexpected body. got %v want %v", got, want)
 		}
+	}
+
+}
+
+func TestDeleteFromListGet(t *testing.T) {
+	e := os.Remove("storage/todoList.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	err := initStore()
+	if err != nil {
+		t.Fatal(e)
+	}
+
+	req, err := http.NewRequest("GET", "/del", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(deleteFromList)
+	handler.ServeHTTP(rr, req)
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	a, _ := template.ParseFiles("templates/formDel.html")
+	var tpl bytes.Buffer
+	a.Execute(&tpl, readList())
+
+	// Check the response body is what we expect.
+	got := rr.Body.String()
+	want := tpl.String()
+	if got != want {
+		t.Errorf("handler returned unexpected body: got %v want %v", got, want)
+	}
+
+}
+
+func TestDeleteFromListPost(t *testing.T) {
+	e := os.Remove("storage/todoList.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	err := initStore()
+	if err != nil {
+		t.Fatal(e)
+	}
+
+	form := url.Values{}
+	form.Add("idbutton", "0")
+	req, err := http.NewRequest("POST", "/del", strings.NewReader(form.Encode()))
+	req.Form = form
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	//create a new router to make sure the variables are passed in properly
+	router := mux.NewRouter()
+	router.HandleFunc("/del", deleteFromList)
+	router.ServeHTTP(rr, req)
+
+	a, _ := template.ParseFiles("templates/formDel.html")
+	var tpl bytes.Buffer
+	a.Execute(&tpl, nil)
+
+	// Check the response body is what we expect.
+	got := rr.Body.String()
+	want := "todo" //tpl.String()
+	if got != want {
+		t.Errorf("handler returned unexpected body: got %v want %v", got, want)
 	}
 
 }

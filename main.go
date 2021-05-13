@@ -175,9 +175,9 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 		title := r.Form["title"]
 		body := r.Form["body"]
 
-		fmt.Println("id: ", id)
-		fmt.Println("title: ", title[0])
-		fmt.Println("body: ", body[0])
+		//fmt.Println("id: ", id)
+		//fmt.Println("title: ", title[0])
+		//fmt.Println("body: ", body[0])
 
 		item := Todo{
 			Id:    id,

@@ -57,24 +57,6 @@ func generateDefaultList() TodoList {
 				Note:  "Add a a a a todo!",
 				State: false,
 			},
-			{
-				Id:    4,
-				Title: "Dont dont care",
-				Note:  "!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-				State: false,
-			},
-			{
-				Id:    5,
-				Title: "Number 5",
-				Note:  "Now number 5",
-				State: true,
-			},
-			{
-				Id:    6,
-				Title: "Number 6",
-				Note:  "Not a things",
-				State: true,
-			},
 		},
 	}
 	return data

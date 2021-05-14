@@ -45,24 +45,6 @@ func TestGenerateDefaultList(t *testing.T) {
 				Note:  "Add a a a a todo!",
 				State: false,
 			},
-			{
-				Id:    4,
-				Title: "Dont dont care",
-				Note:  "!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
-				State: false,
-			},
-			{
-				Id:    5,
-				Title: "Number 5",
-				Note:  "Now number 5",
-				State: true,
-			},
-			{
-				Id:    6,
-				Title: "Number 6",
-				Note:  "Not a things",
-				State: true,
-			},
 		},
 	}
 
@@ -531,29 +513,95 @@ func TestDeleteFromListPost(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	form := url.Values{}
-	form.Add("idbutton", "0")
-	req, err := http.NewRequest("POST", "/del", strings.NewReader(form.Encode()))
-	req.Form = form
-	if err != nil {
-		t.Fatal(err)
+	testDelStruct := []struct {
+		delID    string
+		expected TodoList
+	}{
+		{
+			delID: "0",
+			expected: TodoList{
+				TodoList: []Todo{
+					{
+						Id:    1,
+						Title: "Add New Todo",
+						Note:  "Add a third todo!",
+						State: false,
+					},
+					{
+						Id:    2,
+						Title: "Add Test Todo",
+						Note:  "Add a Fourth todo!",
+						State: false,
+					},
+					{
+						Id:    3,
+						Title: "Add Next",
+						Note:  "Add a a a a todo!",
+						State: false,
+					},
+				},
+			},
+		},
+		{
+			delID: "2",
+			expected: TodoList{
+				TodoList: []Todo{
+					{
+						Id:    1,
+						Title: "Add New Todo",
+						Note:  "Add a third todo!",
+						State: false,
+					},
+					{
+						Id:    3,
+						Title: "Add Next",
+						Note:  "Add a a a a todo!",
+						State: false,
+					},
+				},
+			},
+		},
+		{
+			delID: "3",
+			expected: TodoList{
+				TodoList: []Todo{
+					{
+						Id:    1,
+						Title: "Add New Todo",
+						Note:  "Add a third todo!",
+						State: false,
+					},
+				},
+			},
+		},
 	}
 
-	rr := httptest.NewRecorder()
-	//create a new router to make sure the variables are passed in properly
-	router := mux.NewRouter()
-	router.HandleFunc("/del", deleteFromList)
-	router.ServeHTTP(rr, req)
+	for _, testcase := range testDelStruct {
 
-	a, _ := template.ParseFiles("templates/formDel.html")
-	var tpl bytes.Buffer
-	a.Execute(&tpl, nil)
+		form := url.Values{}
+		form.Add("idbutton", testcase.delID)
+		req, err := http.NewRequest("POST", "/del", strings.NewReader(form.Encode()))
+		req.Form = form
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	// Check the response body is what we expect.
-	got := rr.Body.String()
-	want := "todo" //tpl.String()
-	if got != want {
-		t.Errorf("handler returned unexpected body: got %v want %v", got, want)
+		rr := httptest.NewRecorder()
+		//create a new router to make sure the variables are passed in properly
+		router := mux.NewRouter()
+		router.HandleFunc("/del", deleteFromList)
+		router.ServeHTTP(rr, req)
+
+		a, _ := template.ParseFiles("templates/formDel.html")
+		var tpl bytes.Buffer
+		a.Execute(&tpl, testcase.expected)
+
+		// Check the response body is what we expect.
+		got := rr.Body.String()
+		want := tpl.String()
+		if got != want {
+			t.Errorf("handler returned unexpected body: got %v want %v", got, want)
+		}
 	}
 
 }

@@ -43,7 +43,7 @@ func generateDefaultList() TodoList {
 				Id:    1,
 				Title: "Add New Todo",
 				Note:  "Add a third todo!",
-				State: false,
+				State: true,
 			},
 			{
 				Id:    2,
@@ -252,8 +252,8 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 			t, _ := template.ParseFiles("templates/formNotFound.html")
 			t.Execute(w, nil)
 		}
-
 		return
+
 	} else {
 		r.ParseForm()
 

@@ -31,7 +31,7 @@ func TestGenerateDefaultList(t *testing.T) {
 				Id:    1,
 				Title: "Add New Todo",
 				Note:  "Add a third todo!",
-				State: false,
+				State: true,
 			},
 			{
 				Id:    2,
@@ -239,7 +239,7 @@ func TestGetFullList(t *testing.T) {
 
 func TestGetOneItem(t *testing.T) {
 
-	testRequests := []string{"0", "1", "6"}
+	testRequests := []string{"0", "1", "3"}
 
 	list := readList()
 
@@ -395,7 +395,7 @@ func TestAddToListPost(t *testing.T) {
 			"Test1",
 			"Test1 body",
 			Todo{
-				7,
+				4,
 				"Test1",
 				"Test1 body",
 				false,
@@ -405,7 +405,7 @@ func TestAddToListPost(t *testing.T) {
 			"Test2",
 			"Test2 body. This is a test body",
 			Todo{
-				8,
+				5,
 				"Test2",
 				"Test2 body. This is a test body",
 				false,
@@ -415,7 +415,7 @@ func TestAddToListPost(t *testing.T) {
 			"Test 3",
 			"Test 3 body. This is a test body for the third test.",
 			Todo{
-				9,
+				6,
 				"Test 3",
 				"Test 3 body. This is a test body for the third test.",
 				false,
@@ -525,7 +525,7 @@ func TestDeleteFromListPost(t *testing.T) {
 						Id:    1,
 						Title: "Add New Todo",
 						Note:  "Add a third todo!",
-						State: false,
+						State: true,
 					},
 					{
 						Id:    2,
@@ -550,7 +550,7 @@ func TestDeleteFromListPost(t *testing.T) {
 						Id:    1,
 						Title: "Add New Todo",
 						Note:  "Add a third todo!",
-						State: false,
+						State: true,
 					},
 					{
 						Id:    3,
@@ -569,7 +569,7 @@ func TestDeleteFromListPost(t *testing.T) {
 						Id:    1,
 						Title: "Add New Todo",
 						Note:  "Add a third todo!",
-						State: false,
+						State: true,
 					},
 				},
 			},
@@ -602,6 +602,84 @@ func TestDeleteFromListPost(t *testing.T) {
 		if got != want {
 			t.Errorf("handler returned unexpected body: got %v want %v", got, want)
 		}
+	}
+
+}
+
+func TestUpdateItemGet(t *testing.T) {
+	//clean up the damage caused by the previous test and reset to default state
+	e := os.Remove("storage/todoList.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	err := initStore()
+	if err != nil {
+		t.Fatal(e)
+
+	}
+
+	testUpdateGetStruct := []struct {
+		id       string
+		expected Todo
+	}{
+		{
+			id: "0",
+			expected: Todo{
+				Id:    0,
+				Title: "Default",
+				Note:  "Default Note",
+				State: false,
+			},
+		},
+		{
+			id: "3",
+			expected: Todo{
+				Id:    3,
+				Title: "Add Next",
+				Note:  "Add a a a a todo!",
+				State: false,
+			},
+		},
+		{
+			id: "1",
+			expected: Todo{
+				Id:    1,
+				Title: "Add New Todo",
+				Note:  "Add a third todo!",
+				State: true,
+			},
+		},
+	}
+	for _, testcase := range testUpdateGetStruct {
+
+		req, err := http.NewRequest("GET", "/update/"+testcase.id, nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		rr := httptest.NewRecorder()
+		//create a new router to make sure the variables are passed in properly
+		router := mux.NewRouter()
+		router.HandleFunc("/update/{id}", updateItem)
+		router.ServeHTTP(rr, req)
+
+		//check status code
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		a, _ := template.ParseFiles("templates/formUpdate.html")
+		var tpl bytes.Buffer
+		a.Execute(&tpl, testcase.expected)
+
+		got := rr.Body.String()
+		want := tpl.String()
+
+		if got != want {
+			t.Errorf("handler returned unexpected body: got %v want %v", got, want)
+		}
+
 	}
 
 }

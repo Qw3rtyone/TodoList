@@ -1,9 +1,27 @@
 {
 "todolist": [
 {
+"id": 0,
+"title": "Default",
+"note": "Default Note",
+"state": false
+},
+{
 "id": 1,
 "title": "Add New Todo",
 "note": "Add a third todo!",
+"state": true
+},
+{
+"id": 2,
+"title": "Add Test Todo",
+"note": "Add a Fourth todo!",
+"state": false
+},
+{
+"id": 3,
+"title": "Add Next",
+"note": "Add a a a a todo!",
 "state": false
 }
 ]

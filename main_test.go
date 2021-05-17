@@ -567,10 +567,10 @@ func TestDeleteFromListPost(t *testing.T) {
 		form := url.Values{}
 		form.Add("idbutton", testcase.delID)
 		req, err := http.NewRequest("POST", "/del", strings.NewReader(form.Encode()))
-		req.Form = form
 		if err != nil {
 			t.Fatal(err)
 		}
+		req.Form = form
 
 		rr := httptest.NewRecorder()
 		//create a new router to make sure the variables are passed in properly
@@ -714,4 +714,97 @@ func TestUpdateItemNotFound(t *testing.T) {
 		}
 	}
 
+}
+
+func TestUpdateItemPost(t *testing.T) {
+	//clean up the damage caused by the previous test and reset to default state
+	e := os.Remove("storage/todoList.json")
+	if e != nil {
+		t.Fatal(e)
+	}
+	err := initStore()
+	if err != nil {
+		t.Fatal(e)
+
+	}
+	testUpdateStruct := []struct {
+		updateID    string
+		updateTitle string
+		updateBody  string
+		updateState string
+		expected    Todo
+	}{
+		{
+			updateID:    "0",
+			updateTitle: "New Title for id 0",
+			updateBody:  "New body for id 0",
+			updateState: "true",
+			expected: Todo{
+				Id:    0,
+				Title: "New Title for id 0",
+				Note:  "New body for id 0",
+				State: true,
+			},
+		},
+		{
+			updateID:    "0",
+			updateTitle: "New Title for id 0",
+			updateBody:  "New body for id 0",
+			updateState: "false",
+			expected: Todo{
+				Id:    0,
+				Title: "New Title for id 0",
+				Note:  "New body for id 0",
+				State: false,
+			},
+		},
+		{
+			updateID:    "2",
+			updateTitle: "I want to change thissss",
+			updateBody:  "NP",
+			updateState: "false",
+			expected: Todo{
+				Id:    2,
+				Title: "I want to change thissss",
+				Note:  "NP",
+				State: false,
+			},
+		},
+	}
+
+	for _, testcase := range testUpdateStruct {
+		form := url.Values{}
+		form.Add("Title", testcase.updateTitle)
+		form.Add("Note", testcase.updateBody)
+		form.Add("State", testcase.updateState)
+		req, err := http.NewRequest("POST", "/update/"+testcase.updateID, strings.NewReader(form.Encode()))
+		if err != nil {
+			t.Fatal(err)
+		}
+		req.Form = form
+
+		rr := httptest.NewRecorder()
+		//create a new router to make sure the variables are passed in properly
+		router := mux.NewRouter()
+		router.HandleFunc("/update/{id}", updateItem)
+		router.ServeHTTP(rr, req)
+
+		//check status code
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		}
+
+		a, _ := template.ParseFiles("templates/singleItem.html")
+		var tpl bytes.Buffer
+		a.Execute(&tpl, testcase.expected)
+
+		got := rr.Body.String()
+		want := tpl.String()
+
+		if got != want {
+			t.Errorf("handler returned unexpected body. got %v want %v", got, want)
+		}
+	}
+
+	//t.Errorf("Todo")
 }

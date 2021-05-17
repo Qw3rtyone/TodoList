@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>TodoList: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/Aswin/TodoList/main.go (88.1%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "encoding/json"
+        "fmt"
+        "html/template"
+        "io/ioutil"
+        "log"
+        "net/http"
+        "os"
+        "strconv"
+
+        "github.com/gorilla/mux"
+)
+
+type TodoList struct {
+        TodoList []Todo `json:"todolist"`
+}
+
+type Todo struct {
+        Id    int    `json:"id"`
+        Title string `json:"title"`
+        Note  string `json:"note"`
+        State bool   `json:"state"`
+}
+
+func checkerr(e error) <span class="cov8" title="1">{
+        if e != nil </span><span class="cov0" title="0">{
+                log.Fatal(e)
+        }</span>
+}
+
+func generateDefaultList() TodoList <span class="cov8" title="1">{
+        data := TodoList{
+                TodoList: []Todo{
+                        {
+                                Id:    0,
+                                Title: "Default",
+                                Note:  "Default Note",
+                                State: false,
+                        },
+                        {
+                                Id:    1,
+                                Title: "Add New Todo",
+                                Note:  "Add a third todo!",
+                                State: true,
+                        },
+                        {
+                                Id:    2,
+                                Title: "Add Test Todo",
+                                Note:  "Add a Fourth todo!",
+                                State: false,
+                        },
+                        {
+                                Id:    3,
+                                Title: "Add Next",
+                                Note:  "Add a a a a todo!",
+                                State: false,
+                        },
+                },
+        }
+        return data
+}</span>
+func initStore() error <span class="cov8" title="1">{
+        if _, err := os.Stat("storage/todoList.json"); os.IsNotExist(err) </span><span class="cov8" title="1">{
+
+                data := generateDefaultList()
+                file, err := json.MarshalIndent(data, "", "")
+
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                //fmt.Println("writing")
+                <span class="cov8" title="1">ioutil.WriteFile("storage/todoList.json", file, 0644)
+                //fmt.Println("Finished writing")
+                return nil</span>
+        }
+
+        <span class="cov8" title="1">return nil</span>
+}
+
+func readList() TodoList <span class="cov8" title="1">{
+        data, err := os.Open("storage/todoList.json")
+        checkerr(err)
+        //fmt.Println("Opened file!!")
+
+        defer data.Close()
+
+        byteVal, _ := ioutil.ReadAll(data)
+
+        var tdList TodoList
+
+        json.Unmarshal(byteVal, &amp;tdList)
+
+        return tdList
+}</span>
+
+func homePage(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+
+        t, _ := template.ParseFiles("templates/homepage.html")
+        t.Execute(w, nil)
+
+        //fmt.Println("End of page")
+}</span>
+func getFullList(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        //fmt.Println("Endpoint: full list")
+
+        t, _ := template.ParseFiles("templates/showAllItems.html")
+        t.Execute(w, readList())
+
+}</span>
+func getOneItem(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        //fmt.Println("Endpoint: single item")
+        vars := mux.Vars(r)
+        key := vars["id"]
+        k, err := strconv.Atoi(key)
+        for _, item := range readList().TodoList </span><span class="cov8" title="1">{
+                //fmt.Println(k)
+                if (err == nil) &amp;&amp; (k == item.Id) </span><span class="cov8" title="1">{
+                        t, _ := template.ParseFiles("templates/singleItem.html")
+                        t.Execute(w, item)
+                        return
+                }</span>
+        }
+        <span class="cov8" title="1">t, _ := template.ParseFiles("templates/formNotFound.html")
+        t.Execute(w, nil)
+        return</span>
+}
+
+func generateNewID(list TodoList) int <span class="cov8" title="1">{
+
+        max := 0
+
+        //generation of id(last id at the json file+1)
+        for _, item := range list.TodoList </span><span class="cov8" title="1">{
+                if item.Id &gt; max </span><span class="cov8" title="1">{
+                        max = item.Id
+                }</span>
+        }
+        <span class="cov8" title="1">return (max + 1)</span>
+}
+
+func addToList(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        //fmt.Println("Endpoint: Add new item")
+
+        list := readList()
+
+        if r.Method == "GET" </span><span class="cov8" title="1">{
+                t, _ := template.ParseFiles("templates/form.html")
+                t.Execute(w, nil)
+                return
+        }</span> else<span class="cov8" title="1"> {
+                r.ParseForm()
+
+                id := generateNewID(list)
+                title := r.Form["title"]
+                body := r.Form["body"]
+
+                //fmt.Println("id: ", id)
+                //fmt.Println("title: ", title[0])
+                //fmt.Println("body: ", body[0])
+
+                item := Todo{
+                        Id:    id,
+                        Title: title[0],
+                        Note:  body[0],
+                        State: false,
+                }
+
+                list.TodoList = append(list.TodoList, item)
+                file, _ := json.MarshalIndent(list, "", "")
+
+                t, _ := template.ParseFiles("templates/singleItem.html")
+                t.Execute(w, item)
+
+                //fmt.Println("writing")
+                ioutil.WriteFile("storage/todoList.json", file, 0644)
+                //fmt.Println("Finished writing")
+
+        }</span>
+
+}
+
+func deleteFromList(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        //fmt.Println("Endpoint: Delete item")
+
+        list := readList()
+
+        //fmt.Println("Length: ", len(list.TodoList))
+
+        if r.Method == "GET" </span><span class="cov8" title="1">{
+                t, _ := template.ParseFiles("templates/formDel.html")
+                t.Execute(w, list)
+
+                return
+        }</span>
+        <span class="cov8" title="1">if r.Method == "POST" </span><span class="cov8" title="1">{
+                r.ParseForm()
+
+                idstr := r.Form["idbutton"]
+                ind, _ := strconv.Atoi(idstr[0])
+
+                //fmt.Println("id: ", ind)
+
+                for index, item := range list.TodoList </span><span class="cov8" title="1">{
+                        //fmt.Println("Looping")
+
+                        if item.Id == ind </span><span class="cov8" title="1">{
+                                //fmt.Println("Deleting: ")
+
+                                list.TodoList = append(list.TodoList[:index], list.TodoList[index+1:]...)
+                        }</span>
+                }
+
+                <span class="cov8" title="1">t, _ := template.ParseFiles("templates/formDel.html")
+                t.Execute(w, list)
+
+                file, _ := json.MarshalIndent(list, "", "")
+                //fmt.Println("writing")
+                ioutil.WriteFile("storage/todoList.json", file, 0644)
+                //fmt.Println("Finished writing")
+
+                return</span>
+        }
+}
+func updateItem(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        list := readList()
+
+        vars := mux.Vars(r)
+        id, err := strconv.Atoi(vars["id"])
+        if err != nil </span><span class="cov0" title="0">{
+                fmt.Println("ID is: ", id)
+        }</span>
+        <span class="cov8" title="1">var index int
+        var found bool = false
+        for i := 0; i &lt; len(list.TodoList); i++ </span><span class="cov8" title="1">{
+                //fmt.Println(id)
+                if id == list.TodoList[i].Id </span><span class="cov8" title="1">{
+                        index = i
+                        found = true
+                        break</span>
+                }
+        }
+
+        <span class="cov8" title="1">if r.Method == "GET" </span><span class="cov8" title="1">{
+
+                if found </span><span class="cov8" title="1">{
+                        t, _ := template.ParseFiles("templates/formUpdate.html")
+                        t.Execute(w, list.TodoList[index])
+                }</span> else<span class="cov8" title="1"> {
+                        t, _ := template.ParseFiles("templates/formNotFound.html")
+                        t.Execute(w, nil)
+                }</span>
+                <span class="cov8" title="1">return</span>
+
+        } else<span class="cov8" title="1"> {
+                r.ParseForm()
+
+                title := r.Form["Title"]
+                body := r.Form["Note"]
+                state := r.Form["State"]
+                s, err := strconv.ParseBool(state[0])
+
+                //fmt.Println("Form: ", r.Form)
+
+                list.TodoList[index].Title = title[0]
+                list.TodoList[index].Note = body[0]
+                if err == nil </span><span class="cov8" title="1">{
+                        list.TodoList[index].State = s
+                }</span>
+
+                <span class="cov8" title="1">t, _ := template.ParseFiles("templates/singleItem.html")
+                t.Execute(w, list.TodoList[index])
+
+                file, _ := json.MarshalIndent(list, "", "")
+                fmt.Println("writing")
+                ioutil.WriteFile("storage/todoList.json", file, 0644)
+                fmt.Println("Finished writing")</span>
+        }
+}
+
+func handleRequests() <span class="cov0" title="0">{
+        myRouter := mux.NewRouter().StrictSlash(true)
+
+        myRouter.HandleFunc("/", homePage)
+        myRouter.HandleFunc("/showAll", getFullList)
+        myRouter.HandleFunc("/show/{id}", getOneItem)
+        myRouter.HandleFunc("/add", addToList)
+        myRouter.HandleFunc("/del", deleteFromList)
+        myRouter.HandleFunc("/update/{id}", updateItem)
+
+        myRouter.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(http.Dir("templates/css/"))))
+        log.Fatal(http.ListenAndServe(":10000", myRouter))
+}</span>
+
+func init() <span class="cov8" title="1">{
+
+        err := initStore()
+        checkerr(err)
+}</span>
+func main() <span class="cov0" title="0">{
+
+        readList()
+
+        handleRequests()
+
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

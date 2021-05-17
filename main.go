@@ -101,17 +101,17 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("templates/homepage.html")
 	t.Execute(w, nil)
 
-	fmt.Println("End of page")
+	//fmt.Println("End of page")
 }
 func getFullList(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: full list")
+	//fmt.Println("Endpoint: full list")
 
 	t, _ := template.ParseFiles("templates/showAllItems.html")
 	t.Execute(w, readList())
 
 }
 func getOneItem(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: single item")
+	//fmt.Println("Endpoint: single item")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	k, err := strconv.Atoi(key)
@@ -142,7 +142,7 @@ func generateNewID(list TodoList) int {
 }
 
 func addToList(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: Add new item")
+	//fmt.Println("Endpoint: Add new item")
 
 	list := readList()
 
@@ -174,20 +174,20 @@ func addToList(w http.ResponseWriter, r *http.Request) {
 		t, _ := template.ParseFiles("templates/singleItem.html")
 		t.Execute(w, item)
 
-		fmt.Println("writing")
+		//fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)
-		fmt.Println("Finished writing")
+		//fmt.Println("Finished writing")
 
 	}
 
 }
 
 func deleteFromList(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint: Delete item")
+	//fmt.Println("Endpoint: Delete item")
 
 	list := readList()
 
-	fmt.Println("Length: ", len(list.TodoList))
+	//fmt.Println("Length: ", len(list.TodoList))
 
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("templates/formDel.html")
@@ -201,13 +201,13 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 		idstr := r.Form["idbutton"]
 		ind, _ := strconv.Atoi(idstr[0])
 
-		fmt.Println("id: ", ind)
+		//fmt.Println("id: ", ind)
 
 		for index, item := range list.TodoList {
-			fmt.Println("Looping")
+			//fmt.Println("Looping")
 
 			if item.Id == ind {
-				fmt.Println("Deleting: ")
+				//fmt.Println("Deleting: ")
 
 				list.TodoList = append(list.TodoList[:index], list.TodoList[index+1:]...)
 			}
@@ -217,9 +217,9 @@ func deleteFromList(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, list)
 
 		file, _ := json.MarshalIndent(list, "", "")
-		fmt.Println("writing")
+		//fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)
-		fmt.Println("Finished writing")
+		//fmt.Println("Finished writing")
 
 		return
 	}
@@ -235,7 +235,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 	var index int
 	var found bool = false
 	for i := 0; i < len(list.TodoList); i++ {
-		fmt.Println(id)
+		//fmt.Println(id)
 		if id == list.TodoList[i].Id {
 			index = i
 			found = true
@@ -262,7 +262,7 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 		state := r.Form["State"]
 		s, err := strconv.ParseBool(state[0])
 
-		fmt.Println("Form: ", r.Form)
+		//fmt.Println("Form: ", r.Form)
 
 		list.TodoList[index].Title = title[0]
 		list.TodoList[index].Note = body[0]

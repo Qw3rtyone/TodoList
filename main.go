@@ -24,9 +24,15 @@ type Todo struct {
 	State bool   `json:"state"`
 }
 
-func checkerr(e error) {
-	if e != nil {
-		log.Fatal(e)
+func checkerr(e error, recoverable bool) {
+	if !recoverable {
+		if e != nil {
+			log.Fatal(e)
+		}
+	} else {
+		if e != nil {
+			log.Printf("error: %v", e)
+		}
 	}
 }
 
@@ -67,9 +73,12 @@ func initStore() error {
 		data := generateDefaultList()
 		file, err := json.MarshalIndent(data, "", "")
 
-		if err != nil {
-			return err
-		}
+		checkerr(err, false)
+		/*
+			if err != nil {
+				return err
+			}
+		*/
 
 		//fmt.Println("writing")
 		ioutil.WriteFile("storage/todoList.json", file, 0644)
@@ -82,7 +91,7 @@ func initStore() error {
 
 func readList() TodoList {
 	data, err := os.Open("storage/todoList.json")
-	checkerr(err)
+	checkerr(err, false)
 	//fmt.Println("Opened file!!")
 
 	defer data.Close()
@@ -229,9 +238,12 @@ func updateItem(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		fmt.Println("ID is: ", id)
-	}
+	checkerr(err, true)
+	/*
+		if err != nil {
+			fmt.Println("ID is: ", id)
+		}
+	*/
 	var index int
 	var found bool = false
 	for i := 0; i < len(list.TodoList); i++ {
@@ -297,7 +309,7 @@ func handleRequests() {
 func init() {
 
 	err := initStore()
-	checkerr(err)
+	checkerr(err, false)
 }
 func main() {
 

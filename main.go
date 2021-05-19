@@ -311,6 +311,8 @@ func init() {
 	err := initStore()
 	checkerr(err, false)
 }
+
+/*
 func main() {
 
 	readList()
@@ -318,3 +320,4 @@ func main() {
 	handleRequests()
 
 }
+*/

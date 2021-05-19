@@ -10,15 +10,17 @@ func NewResolver() *Resolver {
 
 	users := make([]*model.User, 0)
 
-	users = append(users, &model.User{ID: "1", Name: "fphilip"})
+	users = append(users, &model.User{ID: "1", Name: "First User"})
 
-	users = append(users, &model.User{ID: "2", Name: "lturanga"})
+	users = append(users, &model.User{ID: "2", Name: "Jeff from accounting"})
 
 	return &Resolver{
 
 		todos: make([]*model.Todo, 0),
 
 		users: users,
+
+		lastUserId: 3,
 	}
 
 }
@@ -29,4 +31,5 @@ type Resolver struct {
 	users []*model.User
 
 	lastTodoId int
+	lastUserId int
 }

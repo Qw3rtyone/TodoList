@@ -1,26 +1,63 @@
 package graph
 
-import "github.com/Aswin/TodoList/graph/model"
+import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"os"
+
+	"github.com/Aswin/TodoList/graph/model"
+)
 
 // This file will not be regenerated automatically.
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
+type TodoList struct {
+	TodoList []Todo `json:"todolist"`
+}
+
+type Todo struct {
+	Id    string `json:"id"`
+	Title string `json:"title"`
+	Note  string `json:"note"`
+	State bool   `json:"state"`
+}
+
+func readList() TodoList {
+	data, err := os.Open("storage/todoList.json")
+	if err != nil {
+		log.Fatal("Error: ", err)
+	}
+
+	//checkerr(err, false)
+	//fmt.Println("Opened file!!")
+
+	defer data.Close()
+
+	byteVal, _ := ioutil.ReadAll(data)
+
+	var tdList TodoList
+
+	json.Unmarshal(byteVal, &tdList)
+
+	return tdList
+}
 func NewResolver() *Resolver {
 
-	users := make([]*model.User, 0)
+	listtd := readList()
 
-	users = append(users, &model.User{ID: "1", Name: "First User"})
+	todos := make([]*model.Todo, 0)
 
-	users = append(users, &model.User{ID: "2", Name: "Jeff from accounting"})
+	for _, item := range listtd.TodoList {
+		todos = append(todos, &model.Todo{ID: item.Id, Title: item.Title, Text: item.Note, Done: item.State})
+	}
 
 	return &Resolver{
 
-		todos: make([]*model.Todo, 0),
+		todos: todos,
 
-		users: users,
-
-		lastUserId: 3,
+		lastTodoId: len(listtd.TodoList),
 	}
 
 }
@@ -28,8 +65,5 @@ func NewResolver() *Resolver {
 type Resolver struct {
 	todos []*model.Todo
 
-	users []*model.User
-
 	lastTodoId int
-	lastUserId int
 }

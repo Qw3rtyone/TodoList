@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/Aswin/TodoList/graph/generated"
@@ -14,24 +13,11 @@ import (
 
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	//panic(fmt.Errorf("not implemented"))
-	var targetUser *model.User
-
-	for _, user := range r.users {
-		if user.ID == input.UserID {
-			targetUser = user
-			break
-		}
-	}
-
-	if targetUser == nil {
-		return nil, fmt.Errorf("user with id '%s' not found", input.UserID)
-	}
 
 	newTodo := &model.Todo{
 		ID:   strconv.Itoa(r.lastTodoId),
 		Text: input.Text,
 		Done: false,
-		User: targetUser,
 	}
 
 	r.todos = append(r.todos, newTodo)
@@ -40,24 +26,8 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	return newTodo, nil
 }
 
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	//panic(fmt.Errorf("not implemented"))
-	newUser := &model.User{
-		ID:   strconv.Itoa(r.lastUserId),
-		Name: input.Name,
-	}
-	r.users = append(r.users, newUser)
-	r.lastUserId++
-
-	return newUser, nil
-}
-
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return r.todos, nil
-}
-
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	return r.users, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

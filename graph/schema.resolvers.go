@@ -9,22 +9,33 @@ import (
 
 	"github.com/Aswin/TodoList/graph/generated"
 	"github.com/Aswin/TodoList/graph/model"
+	"github.com/Aswin/TodoList/internal/todos"
 )
 
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
 	//panic(fmt.Errorf("not implemented"))
+	/*
+		newTodo := &model.Todo{
+			ID:    strconv.Itoa(r.lastTodoId),
+			Title: input.Title,
+			Text:  input.Text,
+			Done:  false,
+		}
 
-	newTodo := &model.Todo{
-		ID:    strconv.Itoa(r.lastTodoId),
-		Title: input.Title,
-		Text:  input.Text,
-		Done:  false,
-	}
+		r.todos = append(r.todos, newTodo)
+		r.lastTodoId++
 
-	r.todos = append(r.todos, newTodo)
-	r.lastTodoId++
+		return newTodo, nil
+	*/
 
-	return newTodo, nil
+	var todo todos.Todo
+	todo.Title = input.Title
+	todo.Note = input.Text
+	todo.State = false
+	todoID := todo.Save()
+
+	return &model.Todo{ID: strconv.FormatInt(todoID, 10), Title: todo.Title, Text: todo.Note, Done: todo.State}, nil
+
 }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {

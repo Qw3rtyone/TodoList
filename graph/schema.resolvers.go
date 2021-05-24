@@ -15,9 +15,10 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	//panic(fmt.Errorf("not implemented"))
 
 	newTodo := &model.Todo{
-		ID:   strconv.Itoa(r.lastTodoId),
-		Text: input.Text,
-		Done: false,
+		ID:    strconv.Itoa(r.lastTodoId),
+		Title: input.Title,
+		Text:  input.Text,
+		Done:  false,
 	}
 
 	r.todos = append(r.todos, newTodo)

@@ -14,8 +14,8 @@ type Query {
 }
 
 input NewTodo {
+  title: String!
   text: String!
-  userId: String!
 }
 
 

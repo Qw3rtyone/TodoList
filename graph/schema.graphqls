@@ -9,6 +9,9 @@ type Todo {
   done: Boolean!
 }
 
+type Respose {
+  change: String!
+}
 type Query {
   todos: [Todo!]!
   finished: [Todo!]!
@@ -21,9 +24,16 @@ input NewTodo {
   text: String!
 }
 
+input UpdateTodo {
+  title: String!
+  text: String!
+  done: Boolean!
+}
+
 
 type Mutation {
   createTodo(input: NewTodo!): Todo!
   toggleTodo(id: ID): Todo!
-  updateTodo(id: ID, input: NewTodo): Todo!
+  updateTodo(id: ID, input: UpdateTodo): Respose!
+
 }

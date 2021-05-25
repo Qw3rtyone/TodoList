@@ -37,6 +37,32 @@ func (todo Todo) Save() int64 {
 	return id
 }
 
+func (todo Todo) UpdateTodo(id string) (int64, error) {
+	stmt, err := database.Db.Prepare("UPDATE `Todolist` SET `Title` = ?, `Note` = ?, `Completed` = ? WHERE `ID` = ?")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	updateID, err := strconv.Atoi(id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	res, err := stmt.Exec(todo.Title, todo.Note, todo.State, updateID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	response, err := res.RowsAffected()
+	if err != nil {
+		log.Print(err)
+	}
+	log.Print("Update finished")
+
+	return response, err
+}
+
 func GetAll() []Todo {
 	stmt, err := database.Db.Prepare("SELECT * FROM `Todolist`")
 

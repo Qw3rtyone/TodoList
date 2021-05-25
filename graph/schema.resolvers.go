@@ -15,21 +15,6 @@ import (
 )
 
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	//panic(fmt.Errorf("not implemented"))
-	/*
-		newTodo := &model.Todo{
-			ID:    strconv.Itoa(r.lastTodoId),
-			Title: input.Title,
-			Text:  input.Text,
-			Done:  false,
-		}
-
-		r.todos = append(r.todos, newTodo)
-		r.lastTodoId++
-
-		return newTodo, nil
-	*/
-
 	var todo todos.Todo
 	todo.Title = input.Title
 	todo.Note = input.Text
@@ -43,8 +28,22 @@ func (r *mutationResolver) ToggleTodo(ctx context.Context, id *string) (*model.T
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) UpdateTodo(ctx context.Context, id *string, input *model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) UpdateTodo(ctx context.Context, id *string, input *model.UpdateTodo) (*model.Respose, error) {
+
+	var todo todos.Todo
+	todo.Title = input.Title
+	todo.Note = input.Text
+	todo.State = input.Done
+
+	res, err := todo.UpdateTodo(*id)
+
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+	retString := "Number of rows changed: " + strconv.Itoa(int(res))
+
+	return &model.Respose{Change: retString}, nil
 }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
@@ -58,7 +57,6 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	}
 
 	return resTodos, nil
-	//return r.todos, nil
 }
 
 func (r *queryResolver) Finished(ctx context.Context) ([]*model.Todo, error) {

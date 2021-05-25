@@ -100,3 +100,35 @@ func GetById(searchID string) (Todo, error) {
 
 	return todo, nil
 }
+
+func GetPortion(state bool) []Todo {
+	stmt, err := database.Db.Prepare("SELECT * FROM `Todolist` WHERE `Completed` = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(state)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var todos []Todo
+	for rows.Next() {
+		var todo Todo
+		err := rows.Scan(&todo.ID, &todo.Title, &todo.Note, &todo.State)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		todos = append(todos, todo)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return todos
+}

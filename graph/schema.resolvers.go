@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -38,6 +39,14 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	return &model.Todo{ID: strconv.FormatInt(todoID, 10), Title: todo.Title, Text: todo.Note, Done: todo.State}, nil
 }
 
+func (r *mutationResolver) ToggleTodo(ctx context.Context, id *string) (*model.Todo, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *mutationResolver) UpdateTodo(ctx context.Context, id *string, input *model.NewTodo) (*model.Todo, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	var resTodos []*model.Todo
 	var dbTodos []todos.Todo
@@ -52,8 +61,33 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	//return r.todos, nil
 }
 
+func (r *queryResolver) Finished(ctx context.Context) ([]*model.Todo, error) {
+	var resTodos []*model.Todo
+	var dbTodos []todos.Todo
+
+	dbTodos = todos.GetPortion(true)
+
+	for _, item := range dbTodos {
+		resTodos = append(resTodos, &model.Todo{ID: strconv.Itoa(item.ID), Title: item.Title, Text: item.Note, Done: item.State})
+	}
+
+	return resTodos, nil
+}
+
+func (r *queryResolver) Unfinished(ctx context.Context) ([]*model.Todo, error) {
+	var resTodos []*model.Todo
+	var dbTodos []todos.Todo
+
+	dbTodos = todos.GetPortion(false)
+
+	for _, item := range dbTodos {
+		resTodos = append(resTodos, &model.Todo{ID: strconv.Itoa(item.ID), Title: item.Title, Text: item.Note, Done: item.State})
+	}
+
+	return resTodos, nil
+}
+
 func (r *queryResolver) Todo(ctx context.Context, id string) (*model.Todo, error) {
-	//panic(fmt.Errorf("not implemented"))
 	var resTodo *model.Todo
 	todo, err := todos.GetById(id)
 	if err != nil {

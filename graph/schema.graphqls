@@ -11,6 +11,8 @@ type Todo {
 
 type Query {
   todos: [Todo!]!
+  finished: [Todo!]!
+  unfinished: [Todo!]! 
   todo(id: ID!): Todo!
 }
 
@@ -21,5 +23,7 @@ input NewTodo {
 
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo! 
+  createTodo(input: NewTodo!): Todo!
+  toggleTodo(id: ID): Todo!
+  updateTodo(id: ID, input: NewTodo): Todo!
 }

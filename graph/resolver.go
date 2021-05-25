@@ -9,18 +9,21 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 func NewResolver() *Resolver {
-	todos := make([]*model.Todo, 0)
+	/*
+		todos := make([]*model.Todo, 0)
 
-	todos = append(todos, &model.Todo{ID: "1", Title: "First Todo", Text: "Body of todo", Done: false})
-	todos = append(todos, &model.Todo{ID: "2", Title: "Get milk", Text: "Milk a cow", Done: true})
+		todos = append(todos, &model.Todo{ID: "1", Title: "First Todo", Text: "Body of todo", Done: false})
+		todos = append(todos, &model.Todo{ID: "2", Title: "Get milk", Text: "Milk a cow", Done: true})
 
-	return &Resolver{
+		return &Resolver{
 
-		todos: todos,
+			todos: todos,
 
-		lastTodoId: 3,
-	}
+			lastTodoId: 3,
+		}
+	*/
 
+	return &Resolver{}
 }
 
 type Resolver struct {

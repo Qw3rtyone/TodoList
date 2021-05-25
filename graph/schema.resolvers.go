@@ -39,7 +39,17 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return r.todos, nil
+	var resTodos []*model.Todo
+	var dbTodos []todos.Todo
+
+	dbTodos = todos.GetAll()
+
+	for _, item := range dbTodos {
+		resTodos = append(resTodos, &model.Todo{ID: strconv.Itoa(item.ID), Title: item.Title, Text: item.Note, Done: item.State})
+	}
+
+	return resTodos, nil
+	//return r.todos, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

@@ -1,7 +1,9 @@
 package todos
 
 import (
+	"database/sql"
 	"log"
+	"strconv"
 
 	database "github.com/Aswin/TodoList/internal/pkg/db/migrations/mysql"
 )
@@ -67,4 +69,34 @@ func GetAll() []Todo {
 	}
 
 	return todos
+}
+
+func GetById(searchID string) (Todo, error) {
+
+	stmt, err := database.Db.Prepare("Select * FROM `Todolist` WHERE `ID` = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	searchIDInt, err := strconv.Atoi(searchID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	row := stmt.QueryRow(searchIDInt)
+
+	var todo Todo
+
+	err = row.Scan(&todo.ID, &todo.Title, &todo.Note, &todo.State)
+
+	if err != nil {
+		if err != sql.ErrNoRows {
+			log.Print(err)
+		}
+
+		return Todo{}, err
+	}
+
+	return todo, nil
 }

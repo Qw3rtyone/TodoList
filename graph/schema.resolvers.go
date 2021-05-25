@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"log"
 	"strconv"
 
 	"github.com/Aswin/TodoList/graph/generated"
@@ -35,7 +36,6 @@ func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) 
 	todoID := todo.Save()
 
 	return &model.Todo{ID: strconv.FormatInt(todoID, 10), Title: todo.Title, Text: todo.Note, Done: todo.State}, nil
-
 }
 
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
@@ -50,6 +50,19 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 
 	return resTodos, nil
 	//return r.todos, nil
+}
+
+func (r *queryResolver) Todo(ctx context.Context, id string) (*model.Todo, error) {
+	//panic(fmt.Errorf("not implemented"))
+	var resTodo *model.Todo
+	todo, err := todos.GetById(id)
+	if err != nil {
+		log.Print(err)
+	}
+
+	resTodo = &model.Todo{ID: strconv.Itoa(todo.ID), Title: todo.Title, Text: todo.Note, Done: todo.State}
+
+	return resTodo, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
